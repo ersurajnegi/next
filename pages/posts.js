@@ -21,7 +21,7 @@ const Post = ({ data }) => {
         {posts &&
           posts.map((item) => {
             return (
-              <div className={styles.card}>
+              <div className={styles.card} key={item.id}>
                 <Link href={`/post/${item.id}`}>
                   <a>{item.title} &rarr;</a>
                 </Link>
@@ -38,6 +38,7 @@ const Post = ({ data }) => {
       id: 1,
     };
     const post = [test, ...posts];
+    debugger;
     setData(post);
   }
 };
