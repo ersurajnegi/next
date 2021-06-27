@@ -1,11 +1,19 @@
+import { useDispatch, useSelector } from "react-redux";
+
 function About({ data }) {
+  const state = useSelector((state) => {
+    return state.about;
+  });
+
+  const dispatch = useDispatch();
+  const changeState = () => {
+    dispatch({ type: "CHANGE_ABOUT_STATE" });
+  };
   return (
     <div>
-      <ul>
-        {data.array.map((element) => {
-          return <li>{element}</li>;
-        })}
-      </ul>
+      <p>Index State Value : {state.aboutState}</p>
+      <button onClick={changeState}>Change State</button>
+
       <span>{data.color}</span>
       <span>{data.string}</span>
       <input type="checkbox" checked={data.boolean} />
