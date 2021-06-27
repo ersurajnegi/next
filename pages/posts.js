@@ -1,11 +1,13 @@
+import { wrapper } from "../redux/store";
 import styles from "../styles/Home.module.css";
 import Link from "next/link";
 
 import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/router";
 
 const Post = ({ data }) => {
+  const router = useRouter();
   const state = useSelector((state) => {
-    console.log("inside useselector", state.posts);
     return state.posts;
   });
 
@@ -13,6 +15,12 @@ const Post = ({ data }) => {
   const changeState = () => {
     dispatch({ type: "CHANGE_POST_STATE" });
   };
+
+  const redirectToPostPage = (id) => {
+    dispatch({ type: "CHANGE_POSTID_STATE", payload: id });
+    router.push(`/post/${id}`);
+  };
+  console.log("Posts Value : ", state.posts);
   return (
     <section>
       <h2>This is example with fetch@server side and update@client side</h2>
@@ -27,9 +35,9 @@ const Post = ({ data }) => {
           state.posts.map((item) => {
             return (
               <div className={styles.card} key={item.id}>
-                <Link href={`/post/${item.id}`}>
-                  <a>{item.title} &rarr;</a>
-                </Link>
+                {/* <Link href={`/post/${item.id}`}> */}
+                <a onClick={() => redirectToPostPage(item.id)}> {item.title} &rarr;</a>
+                {/* </Link> */}
               </div>
             );
           })}
@@ -38,12 +46,15 @@ const Post = ({ data }) => {
   );
 };
 
-export async function getServerSideProps() {
-  // Fetch data from external API
-  const res = await fetch(`https://jsonplaceholder.typicode.com/posts`);
-  const data = await res.json();
-  console.log(`After fetch data : ${data.length}`);
-  // Pass data to the page via props
-  return { props: { data } };
-}
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) =>
+    async ({ req, respos, ...etc }) => {
+      // Fetch data from external API
+      const res = await fetch(`https://jsonplaceholder.typicode.com/posts`);
+      const data = await res.json();
+
+      store.dispatch({ type: "FILLE_POST_ARRAY", payload: data });
+    }
+);
+
 export default Post;
